@@ -3,9 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nahia❤️Fort - Trading Simulator</title>
+
+<title>Nahia❤️Fort Trading Simulator</title>
+
+<script src="https://unpkg.com/lightweight-charts@4.2.2/dist/lightweight-charts.standalone.production.js"></script>
 
 <style>
+
 * {
   box-sizing: border-box;
 }
@@ -13,36 +17,49 @@
 body {
   margin: 0;
   background: #080808;
-  color: #eee;
+  color: #fff;
   font-family: Arial, sans-serif;
 }
 
 header {
   height: 65px;
   background: #101010;
-  border-bottom: 1px solid #252525;
+  border-bottom: 1px solid #292929;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
-  gap: 12px;
+  padding: 12px 20px;
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: bold;
 }
 
 .logo span {
-  color: #e85b82;
+  color: #ed638e;
 }
 
-button, input, select {
-  background: #181818;
+.status {
+  color: #24c88b;
+  font-size: 12px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #111;
+  border-bottom: 1px solid #292929;
+}
+
+select, button, input {
+  background: #191919;
+  border: 1px solid #353535;
   color: white;
-  border: 1px solid #333;
-  padding: 9px;
-  border-radius: 5px;
+  padding: 9px 12px;
+  border-radius: 4px;
 }
 
 button {
@@ -53,30 +70,19 @@ button:hover {
   background: #303030;
 }
 
-.toolbar {
-  background: #101010;
-  padding: 12px;
-  display: flex;
-  gap: 9px;
-  flex-wrap: wrap;
-  border-bottom: 1px solid #252525;
-}
-
 .market {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+  padding: 14px;
   flex-wrap: wrap;
-  padding: 12px;
+  background: #0d0d0d;
 }
 
-.market input {
-  width: 180px;
-}
-
-.status {
-  color: #22c78b;
-  font-size: 12px;
+.price {
+  color: #26c995;
+  font-size: 19px;
+  font-weight: bold;
 }
 
 .charts {
@@ -86,66 +92,47 @@ button:hover {
   padding: 8px;
 }
 
-.chart {
+.panel {
   background: #090909;
   border: 1px solid #292929;
-  border-radius: 5px;
-  overflow: hidden;
   min-width: 0;
 }
 
-.chart-title {
-  background: #111;
+.panel-title {
   padding: 12px;
-  font-size: 13px;
+  background: #111;
   border-bottom: 1px solid #292929;
+  font-size: 13px;
 }
 
-canvas {
+.chart {
   width: 100%;
-  height: 420px;
-  display: block;
-  cursor: crosshair;
+  height: 440px;
 }
 
 .controls {
-  background: #111;
   margin: 8px;
   padding: 15px;
+  background: #111;
   border: 1px solid #292929;
-  border-radius: 6px;
-}
-
-.controls h3 {
-  margin-top: 0;
 }
 
 .row {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
-  gap: 9px;
   margin: 12px 0;
 }
 
 .call {
-  background: #087d55;
+  background: #087c53;
+  flex: 1;
 }
 
 .put {
-  background: #a52b3a;
-}
-
-.call, .put {
+  background: #a82d3d;
   flex: 1;
-  min-width: 100px;
-  font-weight: bold;
-  padding: 13px;
-}
-
-.active {
-  border-color: #e85b82;
-  color: #e85b82;
 }
 
 #history {
@@ -153,71 +140,48 @@ canvas {
   line-height: 2;
 }
 
-.muted {
-  color: #888;
-}
-
-@media(max-width:750px) {
-  header {
-    height: auto;
-    padding: 15px;
-    flex-wrap: wrap;
-  }
+@media(max-width:800px) {
 
   .charts {
     grid-template-columns: 1fr;
   }
 
-  canvas {
-    height: 300px;
+  .chart {
+    height: 350px;
   }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
+
   <div class="logo">
     Nahia<span>❤️</span>Fort
-    <small style="font-size:10px;color:#888">
-      TRADING SIMULATOR
-    </small>
   </div>
 
   <div class="status" id="status">
-    ● MERCADO SIMULADO
+    ● SIMULACIÓN ACTIVA
   </div>
 
   <div>
-    SALDO:
-    <strong id="balance">$10,000</strong>
+    SALDO: $<span id="balance">10000</span>
   </div>
+
 </header>
 
 <div class="market">
 
-  <input
-    id="search"
-    list="assets"
-    placeholder="Buscar activo..."
-    value="EUR/USD OTC"
-  >
-
-  <datalist id="assets">
-    <option value="EUR/USD">
-    <option value="EUR/USD OTC">
-    <option value="GBP/USD">
-    <option value="GBP/USD OTC">
-    <option value="USD/JPY">
-    <option value="USD/JPY OTC">
-    <option value="AUD/USD">
-    <option value="EUR/JPY">
-  </datalist>
-
-  <select id="mode">
-    <option value="OTC">OTC</option>
-    <option value="REAL">REAL</option>
+  <select id="asset">
+    <option>EUR/USD OTC</option>
+    <option>EUR/USD</option>
+    <option>GBP/USD</option>
+    <option>GBP/USD OTC</option>
+    <option>USD/JPY</option>
+    <option>AUD/USD</option>
   </select>
 
   <select id="timeframe">
@@ -226,55 +190,55 @@ canvas {
     <option value="15">M15</option>
   </select>
 
-  <span id="price">1.08450</span>
+  <span class="price" id="price">
+    1.08450
+  </span>
 
 </div>
 
 <div class="toolbar">
 
-  <button onclick="setDrawing('none')">
-    Cursor
+  <button onclick="resetView()">
+    Restablecer zoom
   </button>
 
-  <button onclick="setDrawing('horizontal')">
-    ─ Horizontal
+  <button onclick="horizontalLine()">
+    Línea horizontal
   </button>
 
-  <button onclick="setDrawing('vertical')">
-    │ Vertical
+  <button onclick="clearLines()">
+    Borrar líneas
   </button>
 
-  <button onclick="setDrawing('trend')">
-    ╱ Tendencia
+  <button onclick="togglePlay()">
+    Reproducir / Pausar
   </button>
 
-  <button onclick="clearDrawings()">
-    Borrar dibujos
+  <button onclick="nextTick()">
+    Avanzar
   </button>
 
 </div>
 
 <div class="charts">
 
-  <div class="chart">
+  <div class="panel">
 
-    <div class="chart-title">
+    <div class="panel-title">
       GRÁFICO DE VELAS JAPONESAS
-      <span class="muted">M1</span>
     </div>
 
-    <canvas id="candles"></canvas>
+    <div id="candleChart" class="chart"></div>
 
   </div>
 
-  <div class="chart">
+  <div class="panel">
 
-    <div class="chart-title">
+    <div class="panel-title">
       GRÁFICO DE LÍNEAS
-      <span class="muted">SINCRONIZADO</span>
     </div>
 
-    <canvas id="line"></canvas>
+    <div id="lineChart" class="chart"></div>
 
   </div>
 
@@ -282,7 +246,7 @@ canvas {
 
 <div class="controls">
 
-  <h3>REPRODUCCIÓN DEL MERCADO</h3>
+  <h3>REPRODUCCIÓN HISTÓRICA SIMULADA</h3>
 
   <div class="row">
 
@@ -296,23 +260,23 @@ canvas {
       <input type="time" id="hour" value="12:00">
     </label>
 
-    <button onclick="loadReplay()">
-      Cargar momento
+    <button onclick="loadScenario()">
+      Cargar escenario
     </button>
 
   </div>
 
   <div class="row">
 
-    <button onclick="restart()">⏮ Inicio</button>
-
-    <button onclick="togglePlay()" id="play">
+    <button onclick="togglePlay()" id="playButton">
       ⏸ Pausar
     </button>
 
-    <button onclick="step()">⏭ Tick</button>
+    <button onclick="nextTick()">
+      ⏭ Avanzar tick
+    </button>
 
-    <select id="speed" onchange="changeSpeed()">
+    <select id="speed">
       <option value="1000">1x</option>
       <option value="500">2x</option>
       <option value="200">5x</option>
@@ -325,616 +289,112 @@ canvas {
 
     <label>
       Importe:
-      <input type="number" id="amount"
-        value="100" min="1">
+      <input type="number" id="amount" value="100">
     </label>
 
-    <label>
-      Expiración:
-      <select id="expiry">
-        <option value="60">1 minuto</option>
-        <option value="120">2 minutos</option>
-        <option value="180">3 minutos</option>
-        <option value="300">5 minutos</option>
-      </select>
-    </label>
-
-  </div>
-
-  <div class="row">
-
-    <button class="call" onclick="trade('CALL')">
+    <button class="call" onclick="operation('CALL')">
       ▲ CALL
     </button>
 
-    <button class="put" onclick="trade('PUT')">
+    <button class="put" onclick="operation('PUT')">
       ▼ PUT
     </button>
 
   </div>
 
-  <p id="message" class="muted">
-    Esperando operación...
+  <p id="message">
+    Simulador preparado.
   </p>
 
 </div>
 
 <div class="controls">
 
-  <h3>HISTORIAL DE OPERACIONES</h3>
+  <h3>HISTORIAL</h3>
 
   <div id="history">
-    Todavía no hay operaciones.
+    Sin operaciones.
   </div>
 
 </div>
 
 <script>
 
-let price = 1.08450;
-let balance = 10000;
+// CONFIGURACIÓN DE GRÁFICOS
 
-let candles = [];
-let ticks = [];
+const chartOptions = {
 
-let drawings = [];
+  layout: {
+    background: {
+      color: '#090909'
+    },
 
-let drawingMode = 'none';
+    textColor: '#999'
+  },
 
-let running = true;
-let speed = 1000;
+  grid: {
+    vertLines: {
+      color: '#202020'
+    },
 
-let tickCount = 0;
-let timer;
+    horzLines: {
+      color: '#202020'
+    }
+  },
 
-let operations = [];
+  rightPriceScale: {
+    borderColor: '#333'
+  },
 
-const candleCanvas =
-  document.getElementById('candles');
+  timeScale: {
+    borderColor: '#333',
+    timeVisible: true,
+    secondsVisible: false
+  },
 
-const lineCanvas =
-  document.getElementById('line');
-
-const candleCtx =
-  candleCanvas.getContext('2d');
-
-const lineCtx =
-  lineCanvas.getContext('2d');
-
-function resizeCanvas(canvas) {
-
-  const ratio = window.devicePixelRatio || 1;
-
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-
-  const ctx = canvas.getContext('2d');
-
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
-}
-
-function createCandle() {
-
-  candles.push({
-    open: price,
-    close: price,
-    high: price,
-    low: price
-  });
-
-  if(candles.length > 100) {
-    candles.shift();
+  crosshair: {
+    mode: 0
   }
 
-}
+};
 
-function generateTick() {
-
-  const volatility = 0.00008;
-
-  let movement =
-    (Math.random() - 0.5) * volatility;
-
-  price += movement;
-
-  let candle = candles[candles.length - 1];
-
-  candle.close = price;
-
-  candle.high = Math.max(candle.high, price);
-
-  candle.low = Math.min(candle.low, price);
-
-  ticks.push(price);
-
-  if(ticks.length > 3000) {
-    ticks.shift();
-  }
-
-  tickCount++;
-
-  if(tickCount % 60 === 0) {
-    createCandle();
-  }
-
-  document.getElementById('price').textContent =
-    price.toFixed(5);
-
-  updateOperations();
-
-  drawCharts();
-
-}
-
-function grid(ctx, width, height) {
-
-  ctx.strokeStyle = '#252525';
-  ctx.lineWidth = 0.6;
-
-  for(let x = 0; x < width; x += 55) {
-
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-    ctx.stroke();
-
-  }
-
-  for(let y = 0; y < height; y += 45) {
-
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-    ctx.stroke();
-
-  }
-
-}
-
-function drawCandles() {
-
-  const width = candleCanvas.clientWidth;
-  const height = candleCanvas.clientHeight;
-
-  candleCtx.clearRect(0,0,width,height);
-
-  grid(candleCtx,width,height);
-
-  if(!candles.length) return;
-
-  const min = Math.min(
-    ...candles.map(c => c.low)
+const candleChart =
+  LightweightCharts.createChart(
+    document.getElementById('candleChart'),
+    chartOptions
   );
 
-  const max = Math.max(
-    ...candles.map(c => c.high)
+const lineChart =
+  LightweightCharts.createChart(
+    document.getElementById('lineChart'),
+    chartOptions
   );
 
-  const range = max - min || 0.0001;
+const candleSeries =
+  candleChart.addCandlestickSeries({
 
-  const y = value =>
-    height - 20 -
-    ((value-min)/range)*(height-40);
+    upColor: '#19bd83',
+    downColor: '#ed5262',
 
-  const gap = width / 45;
+    borderUpColor: '#19bd83',
+    borderDownColor: '#ed5262',
 
-  candles.slice(-45).forEach((c,i) => {
-
-    const x = i * gap + gap/2;
-
-    const bullish = c.close >= c.open;
-
-    const color = bullish
-      ? '#20bd83'
-      : '#ed5363';
-
-    candleCtx.strokeStyle = color;
-    candleCtx.fillStyle = color;
-
-    candleCtx.beginPath();
-
-    candleCtx.moveTo(x,y(c.high));
-    candleCtx.lineTo(x,y(c.low));
-
-    candleCtx.stroke();
-
-    const top = Math.min(
-      y(c.open),
-      y(c.close)
-    );
-
-    const bottom = Math.max(
-      y(c.open),
-      y(c.close)
-    );
-
-    candleCtx.fillRect(
-      x-gap*0.3,
-      top,
-      gap*0.6,
-      Math.max(1,bottom-top)
-    );
+    wickUpColor: '#19bd83',
+    wickDownColor: '#ed5262'
 
   });
 
-  drawTools(candleCtx,width,height,min,max);
+const lineSeries =
+  lineChart.addLineSeries({
 
-}
+    color: '#32a9ed',
+    lineWidth: 2,
 
-function drawLine() {
-
-  const width = lineCanvas.clientWidth;
-  const height = lineCanvas.clientHeight;
-
-  lineCtx.clearRect(0,0,width,height);
-
-  grid(lineCtx,width,height);
-
-  if(ticks.length < 2) return;
-
-  const data = ticks.slice(-300);
-
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-
-  const range = max-min || 0.0001;
-
-  lineCtx.strokeStyle = '#36a9ef';
-  lineCtx.lineWidth = 2;
-
-  lineCtx.beginPath();
-
-  data.forEach((value,i) => {
-
-    const x = i/(data.length-1)*width;
-
-    const y = height-20-
-      ((value-min)/range)*(height-40);
-
-    if(i===0) {
-      lineCtx.moveTo(x,y);
-    } else {
-      lineCtx.lineTo(x,y);
-    }
+    crosshairMarkerVisible: true
 
   });
 
-  lineCtx.stroke();
 
-}
+// SINCRONIZAR ESCALAS
 
-function drawTools(ctx,width,height,min,max) {
-
-  drawings.forEach(d => {
-
-    ctx.strokeStyle = '#d3a64b';
-    ctx.lineWidth = 1;
-
-    ctx.setLineDash([5,4]);
-
-    if(d.type === 'horizontal') {
-
-      ctx.beginPath();
-      ctx.moveTo(0,d.y);
-      ctx.lineTo(width,d.y);
-      ctx.stroke();
-
-    }
-
-    if(d.type === 'vertical') {
-
-      ctx.beginPath();
-      ctx.moveTo(d.x,0);
-      ctx.lineTo(d.x,height);
-      ctx.stroke();
-
-    }
-
-    if(d.type === 'trend') {
-
-      ctx.beginPath();
-      ctx.moveTo(d.x,d.y);
-      ctx.lineTo(d.x2,d.y2);
-      ctx.stroke();
-
-    }
-
-    ctx.setLineDash([]);
-
-  });
-
-}
-
-function drawCharts() {
-
-  drawCandles();
-  drawLine();
-
-}
-
-function setDrawing(type) {
-
-  drawingMode = type;
-
-}
-
-function clearDrawings() {
-
-  drawings = [];
-
-  drawCharts();
-
-}
-
-candleCanvas.addEventListener('click', e => {
-
-  if(drawingMode === 'none') return;
-
-  const rect = candleCanvas.getBoundingClientRect();
-
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  if(drawingMode === 'trend') {
-
-    drawings.push({
-      type:'trend',
-      x,
-      y,
-      x2:x+80,
-      y2:y-40
-    });
-
-  } else {
-
-    drawings.push({
-      type:drawingMode,
-      x,
-      y
-    });
-
-  }
-
-  drawCharts();
-
-});
-
-function updateBalance() {
-
-  document.getElementById('balance').textContent =
-    '$'+balance.toFixed(2);
-
-}
-
-function trade(type) {
-
-  const amount = Number(
-    document.getElementById('amount').value
-  );
-
-  if(!amount || amount <= 0 || amount > balance) {
-
-    document.getElementById('message').textContent =
-      'Importe inválido o saldo insuficiente.';
-
-    return;
-
-  }
-
-  balance -= amount;
-
-  const duration = Number(
-    document.getElementById('expiry').value
-  );
-
-  operations.push({
-
-    type,
-    entry:price,
-    amount,
-    end:tickCount+duration,
-    finished:false
-
-  });
-
-  updateBalance();
-
-  document.getElementById('message').textContent =
-    type+' abierto a '+price.toFixed(5);
-
-  renderHistory();
-
-}
-
-function updateOperations() {
-
-  operations.forEach(op => {
-
-    if(op.finished || tickCount < op.end) {
-      return;
-    }
-
-    op.finished = true;
-
-    const win =
-      op.type === 'CALL'
-        ? price > op.entry
-        : price < op.entry;
-
-    op.result = win ? 'GANADA' : 'PERDIDA';
-
-    op.profit = win
-      ? op.amount * 0.8
-      : -op.amount;
-
-    if(win) {
-      balance += op.amount + op.profit;
-    }
-
-    renderHistory();
-
-    updateBalance();
-
-  });
-
-}
-
-function renderHistory() {
-
-  const history = document.getElementById('history');
-
-  history.innerHTML = operations
-    .slice(-15)
-    .reverse()
-    .map(op => {
-
-      const color = !op.finished
-        ? '#aaa'
-        : op.profit > 0
-          ? '#20bd83'
-          : '#ed5363';
-
-      return `
-        <div style="border-bottom:1px solid #292929">
-          ${op.type} |
-          ${op.entry.toFixed(5)} |
-          ${op.finished ? op.result : 'EN CURSO'}
-          <span style="color:${color}">
-            ${op.finished ? op.profit.toFixed(2) : ''}
-          </span>
-        </div>
-      `;
-
-    }).join('');
-
-}
-
-function togglePlay() {
-
-  running = !running;
-
-  document.getElementById('play').textContent =
-    running ? '⏸ Pausar' : '▶ Reproducir';
-
-  document.getElementById('status').textContent =
-    running ? '● MERCADO SIMULADO' : 'Ⅱ PAUSADO';
-
-}
-
-function step() {
-
-  if(running) {
-    togglePlay();
-  }
-
-  generateTick();
-
-}
-
-function restart() {
-
-  running = false;
-
-  price = 1.08450;
-
-  candles = [];
-  ticks = [];
-
-  drawings = [];
-
-  tickCount = 0;
-
-  createCandle();
-
-  ticks.push(price);
-
-  drawCharts();
-
-}
-
-function changeSpeed() {
-
-  speed = Number(
-    document.getElementById('speed').value
-  );
-
-  clearInterval(timer);
-
-  startTimer();
-
-}
-
-function startTimer() {
-
-  timer = setInterval(() => {
-
-    if(running) {
-      generateTick();
-    }
-
-  },speed);
-
-}
-
-function loadReplay() {
-
-  restart();
-
-  const date =
-    document.getElementById('date').value;
-
-  const hour =
-    document.getElementById('hour').value;
-
-  document.getElementById('message').textContent =
-    'Escenario sintético iniciado para '+date+' '+hour+
-    '. No representa históricos reales.';
-
-  running = true;
-
-  togglePlay();
-
-}
-
-document.getElementById('search')
-  .addEventListener('change', e => {
-
-    document.querySelector('.chart-title');
-
-    document.getElementById('message').textContent =
-      'Activo seleccionado: '+e.target.value+
-      '. Datos sintéticos de demostración.';
-
-  });
-
-window.addEventListener('resize', () => {
-
-  resizeCanvas(candleCanvas);
-  resizeCanvas(lineCanvas);
-
-  drawCharts();
-
-});
-
-document.getElementById('date').value =
-  new Date().toISOString().slice(0,10);
-
-resizeCanvas(candleCanvas);
-resizeCanvas(lineCanvas);
-
-createCandle();
-
-ticks.push(price);
-
-drawCharts();
-
-startTimer();
-
-</script>
-
-</body>
-</html>
+let syncing
